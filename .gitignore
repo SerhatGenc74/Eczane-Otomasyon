@@ -1,0 +1,39 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Visual Studio user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# VS cache and generated files
+.vs/
+*.cache
+*.log
+
+# NuGet packages and cache
+packages/
+*.nupkg
+*.snupkg
+
+# Keep NuGet build targets in source if present
+!**/packages/build/
+!**/packages/repositories.config
+
+# Test and coverage output
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# OS / tooling
+.DS_Store
+Thumbs.db
+

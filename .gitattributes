@@ -1,0 +1,36 @@
+# Auto-detect text files
+* text=auto
+
+# Keep repository metadata in LF
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Windows-first .NET project files
+*.sln text eol=crlf
+*.slnx text eol=crlf
+*.cs text eol=crlf
+*.csproj text eol=crlf
+*.config text eol=crlf
+*.resx text eol=crlf
+*.settings text eol=crlf
+*.targets text eol=crlf
+*.props text eol=crlf
+
+# Keep Windows script files with CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Keep shell scripts in LF
+*.sh text eol=lf
+
+# Treat common binary formats as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.dll binary
+*.exe binary

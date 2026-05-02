@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EczaneOtomasyon.Domain.Interfaces
 {
-    public interface IKategoriRepository : IRepositoryBase<Kategori>
+    public interface IKategoriRepository : IRepositoryBase<Kategoriler>
     {
     }
 }

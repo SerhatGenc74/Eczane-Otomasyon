@@ -12,9 +12,15 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
     public class IlaclarService : IIlaclarService
     {
         IUnitOfWork _db;
-        IlaclarService(IUnitOfWork db)
+        public IlaclarService(IUnitOfWork db)
         {
             _db = db;
+        }
+
+        public List<Ilaclar> IlacAra(string aramaKelimesi)
+        {
+            List<Ilaclar> list = _db.Ilaclar.GetByColumn(x => x.IlacAdi, $"%{aramaKelimesi}%", "LIKE");
+            return list;
         }
 
         public bool IlacEkle(Ilaclar ilac)

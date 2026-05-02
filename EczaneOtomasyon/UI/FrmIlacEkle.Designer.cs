@@ -44,6 +44,8 @@
             this.btn_kaydet = new System.Windows.Forms.Button();
             this.cbox_recetetur = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.txt_rafno = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nud_stokadet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_kritik)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_birimfiyat)).BeginInit();
@@ -188,11 +190,29 @@
             this.label7.TabIndex = 9;
             this.label7.Text = "Reçete Türü";
             // 
+            // txt_rafno
+            // 
+            this.txt_rafno.Location = new System.Drawing.Point(290, 252);
+            this.txt_rafno.Name = "txt_rafno";
+            this.txt_rafno.Size = new System.Drawing.Size(202, 20);
+            this.txt_rafno.TabIndex = 10;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(287, 236);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(41, 13);
+            this.label8.TabIndex = 11;
+            this.label8.Text = "Raf No";
+            // 
             // FrmIlacEkle
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(635, 372);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.txt_rafno);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.cbox_recetetur);
             this.Controls.Add(this.btn_kaydet);
@@ -238,5 +258,7 @@
         private System.Windows.Forms.Button btn_kaydet;
         private System.Windows.Forms.ComboBox cbox_recetetur;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox txt_rafno;
+        private System.Windows.Forms.Label label8;
     }
 }

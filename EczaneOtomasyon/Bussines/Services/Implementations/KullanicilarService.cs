@@ -19,22 +19,42 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
 
         public bool ChangePassword(int kullaniciId, string yeniSifre)
         {
-            throw new NotImplementedException();
+            if (kullaniciId <= 0 || string.IsNullOrWhiteSpace(yeniSifre))
+            {
+                return false;
+            }
+
+            return _db.Kullanicilar.Update(kullaniciId, new { Sifre = yeniSifre });
         }
 
         public bool DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            return _db.Kullanicilar.Delete(id);
         }
 
         public List<Kullanicilar> GetAllUsers()
         {
-            throw new NotImplementedException();
+            return _db.Kullanicilar.GetAll();
         }
 
-        public void KullaniciEkle(Kullanicilar kullanici)
+        public bool KullaniciEkle(Kullanicilar kullanici)
         {
-            throw new NotImplementedException();
+            if (kullanici == null)
+            {
+                return false;
+            }
+
+            return _db.Kullanicilar.Add(kullanici);
+        }
+
+        public bool KullaniciGuncelle(Kullanicilar kullanici)
+        {
+            if (kullanici == null)
+            {
+                return false;
+            }
+
+            return _db.Kullanicilar.Update(kullanici.KullaniciID, kullanici);
         }
 
         public Kullanicilar Login(string kullaniciAdi, string sifre)

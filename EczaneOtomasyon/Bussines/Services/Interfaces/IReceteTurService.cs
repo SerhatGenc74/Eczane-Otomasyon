@@ -1,14 +1,14 @@
 ﻿using EczaneOtomasyon.Domain.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EczaneOtomasyon.Bussines.Services.Interfaces
 {
     public interface IReceteTurService
     {
-        List<ReceteTur> GetReceteTur(); 
+        Dictionary<int, string> GetReceteTurleri();
+        List<ReceteTurleri> GetReceteTurList();
+        bool ReceteTurEkle(ReceteTurleri tur);
+        bool ReceteTurGuncelle(ReceteTurleri tur);
+        bool ReceteTurSil(int turId);
     }
 }

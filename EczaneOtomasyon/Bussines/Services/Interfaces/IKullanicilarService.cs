@@ -10,7 +10,8 @@ namespace EczaneOtomasyon.Bussines.Services.Interfaces
     public interface IKullanicilarService
     {
         List<Kullanicilar> GetAllUsers();
-        void KullaniciEkle(Kullanicilar kullanici);
+        bool KullaniciEkle(Kullanicilar kullanici);
+        bool KullaniciGuncelle(Kullanicilar kullanici);
         bool DeleteUser(int id);
         bool ChangePassword(int kullaniciId, string yeniSifre);
         Kullanicilar Login(string kullaniciAdi, string sifre);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EczaneOtomasyon.Domain.Interfaces
 {
-    internal interface IReceteTurRepository : IRepositoryBase<ReceteTur>
+    public interface IReceteTurRepository : IRepositoryBase<ReceteTurleri>
     {
     }
 }

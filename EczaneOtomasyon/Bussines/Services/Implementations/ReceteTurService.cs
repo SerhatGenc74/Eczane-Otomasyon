@@ -1,20 +1,52 @@
 ﻿using EczaneOtomasyon.Bussines.Services.Interfaces;
 using EczaneOtomasyon.Domain.Entities;
-using System;
+using EczaneOtomasyon.Domain.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EczaneOtomasyon.Bussines.Services.Implementations
 {
     public class ReceteTurService : IReceteTurService
     {
-        public Dictionary<int, string> ReceteTur = new Dictionary<int, string>();
-
-        public List<ReceteTur> GetReceteTurleri()
+        IUnitOfWork _unitOfWork;
+        public ReceteTurService(IUnitOfWork unitOfWork)
         {
-            throw new NotImplementedException();
+            _unitOfWork = unitOfWork;
+        }
+        public Dictionary<int, string> GetReceteTurleri()
+        {
+            var receteturleri = _unitOfWork.ReceteTur.GetAll();
+            return receteturleri.ToDictionary(rt=>rt.TurID, rt=>rt.TurAdi);
+        }
+
+        public List<ReceteTurleri> GetReceteTurList()
+        {
+            return _unitOfWork.ReceteTur.GetAll();
+        }
+
+        public bool ReceteTurEkle(ReceteTurleri tur)
+        {
+            if (tur == null)
+            {
+                return false;
+            }
+
+            return _unitOfWork.ReceteTur.Add(tur);
+        }
+
+        public bool ReceteTurGuncelle(ReceteTurleri tur)
+        {
+            if (tur == null)
+            {
+                return false;
+            }
+
+            return _unitOfWork.ReceteTur.Update(tur.TurID, tur);
+        }
+
+        public bool ReceteTurSil(int turId)
+        {
+            return _unitOfWork.ReceteTur.Delete(turId);
         }
     }
 }

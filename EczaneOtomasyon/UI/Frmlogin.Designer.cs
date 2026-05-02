@@ -39,7 +39,7 @@
             this.pnl_sidebar = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btn_Ilaclar = new System.Windows.Forms.Button();
             this.pnl_Ilaclar = new System.Windows.Forms.Panel();
             this.pnl_content = new System.Windows.Forms.Panel();
             this.pnl_header = new System.Windows.Forms.Panel();
@@ -101,12 +101,12 @@
             // 
             // pnl_login
             // 
-            this.pnl_login.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.pnl_login.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(44)))), ((int)(((byte)(80)))));
             this.pnl_login.Controls.Add(this.pnl_logincard);
             this.pnl_login.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnl_login.Location = new System.Drawing.Point(0, 0);
             this.pnl_login.Name = "pnl_login";
-            this.pnl_login.Size = new System.Drawing.Size(800, 450);
+            this.pnl_login.Size = new System.Drawing.Size(1200, 700);
             this.pnl_login.TabIndex = 5;
             this.pnl_login.Paint += new System.Windows.Forms.PaintEventHandler(this.pnl_login_Paint);
             // 
@@ -120,7 +120,7 @@
             this.pnl_logincard.Controls.Add(this.label2);
             this.pnl_logincard.Controls.Add(this.label1);
             this.pnl_logincard.Controls.Add(this.txt_username);
-            this.pnl_logincard.Location = new System.Drawing.Point(217, 50);
+            this.pnl_logincard.Location = new System.Drawing.Point(425, 180);
             this.pnl_logincard.Name = "pnl_logincard";
             this.pnl_logincard.Size = new System.Drawing.Size(350, 341);
             this.pnl_logincard.TabIndex = 5;
@@ -130,16 +130,16 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(150, 25);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 13);
+            this.label3.Size = new System.Drawing.Size(132, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "HOŞ GELDİNİZ";
+            this.label3.Text = "ECZANE OTOMASYONU";
             // 
             // pnl_sidebar
             // 
             this.pnl_sidebar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
             this.pnl_sidebar.Controls.Add(this.button3);
             this.pnl_sidebar.Controls.Add(this.button2);
-            this.pnl_sidebar.Controls.Add(this.button1);
+            this.pnl_sidebar.Controls.Add(this.btn_Ilaclar);
             this.pnl_sidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnl_sidebar.Location = new System.Drawing.Point(0, 60);
             this.pnl_sidebar.Name = "pnl_sidebar";
@@ -156,8 +156,9 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(200, 50);
             this.button3.TabIndex = 2;
-            this.button3.Text = "button3";
+            this.button3.Text = "Düzenleme ve Arayüz";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.btn_DuzenlemeArayuz_Click);
             // 
             // button2
             // 
@@ -169,40 +170,43 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(200, 50);
             this.button2.TabIndex = 1;
-            this.button2.Text = "button2";
+            this.button2.Text = "Hasta ve Reçete";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.btn_HastaRecete_Click);
             // 
-            // button1
+            // btn_Ilaclar
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.ForeColor = System.Drawing.SystemColors.Control;
-            this.button1.Location = new System.Drawing.Point(0, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(200, 50);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btn_Ilaclar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btn_Ilaclar.FlatAppearance.BorderSize = 0;
+            this.btn_Ilaclar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Ilaclar.ForeColor = System.Drawing.SystemColors.Control;
+            this.btn_Ilaclar.Location = new System.Drawing.Point(0, 0);
+            this.btn_Ilaclar.Name = "btn_Ilaclar";
+            this.btn_Ilaclar.Size = new System.Drawing.Size(200, 50);
+            this.btn_Ilaclar.TabIndex = 0;
+            this.btn_Ilaclar.Text = "İlaç Stok";
+            this.btn_Ilaclar.UseVisualStyleBackColor = true;
+            this.btn_Ilaclar.Click += new System.EventHandler(this.btn_Ilaclar_Click);
             // 
             // pnl_Ilaclar
             // 
-            this.pnl_Ilaclar.Controls.Add(this.pnl_sidebar);
             this.pnl_Ilaclar.Controls.Add(this.pnl_content);
+            this.pnl_Ilaclar.Controls.Add(this.pnl_sidebar);
             this.pnl_Ilaclar.Controls.Add(this.pnl_header);
             this.pnl_Ilaclar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnl_Ilaclar.Location = new System.Drawing.Point(0, 0);
             this.pnl_Ilaclar.Name = "pnl_Ilaclar";
-            this.pnl_Ilaclar.Size = new System.Drawing.Size(800, 450);
+            this.pnl_Ilaclar.Size = new System.Drawing.Size(1200, 700);
             this.pnl_Ilaclar.TabIndex = 7;
             this.pnl_Ilaclar.Visible = false;
             // 
             // pnl_content
             // 
+            this.pnl_content.BackColor = System.Drawing.Color.WhiteSmoke;
             this.pnl_content.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnl_content.Location = new System.Drawing.Point(0, 60);
+            this.pnl_content.Location = new System.Drawing.Point(200, 60);
             this.pnl_content.Name = "pnl_content";
-            this.pnl_content.Size = new System.Drawing.Size(800, 390);
+            this.pnl_content.Size = new System.Drawing.Size(1000, 640);
             this.pnl_content.TabIndex = 8;
             // 
             // pnl_header
@@ -221,24 +225,25 @@
             this.button4.FlatAppearance.BorderSize = 0;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.ForeColor = System.Drawing.SystemColors.Control;
-            this.button4.Location = new System.Drawing.Point(664, 0);
+            this.button4.Location = new System.Drawing.Point(1064, 0);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(136, 60);
             this.button4.TabIndex = 3;
-            this.button4.Text = "button4";
+            this.button4.Text = "Satış ve Fatura";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.btn_SatisFatura_Click);
             // 
-            // frmlogin
+            // Frmlogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1200, 700);
             this.Controls.Add(this.pnl_Ilaclar);
             this.Controls.Add(this.pnl_login);
-            this.Name = "frmlogin";
+            this.Name = "Frmlogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "frmlogin";
+            this.Text = "Eczane Otomasyon";
             this.pnl_login.ResumeLayout(false);
             this.pnl_logincard.ResumeLayout(false);
             this.pnl_logincard.PerformLayout();
@@ -258,7 +263,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel pnl_login;
         private System.Windows.Forms.Panel pnl_sidebar;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btn_Ilaclar;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Panel pnl_Ilaclar;

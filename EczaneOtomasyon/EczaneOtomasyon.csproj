@@ -64,19 +64,59 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bussines\Services\Implementations\AuthService.cs" />
     <Compile Include="Bussines\Services\Implementations\IlaclarService.cs" />
+    <Compile Include="Bussines\Services\Implementations\DoktorlarService.cs" />
+    <Compile Include="Bussines\Services\Implementations\KategoriService.cs" />
+    <Compile Include="Bussines\Services\Implementations\HastalarService.cs" />
     <Compile Include="Bussines\Services\Implementations\KullanicilarService.cs" />
+    <Compile Include="Bussines\Services\Implementations\ReceteTurService.cs" />
+    <Compile Include="Bussines\Services\Implementations\RecetelerService.cs" />
+    <Compile Include="Bussines\Services\Implementations\SatislarService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\IAuthService.cs" />
     <Compile Include="Bussines\Services\Interfaces\IIlaclarService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\IDoktorlarService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\IKategoriService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\IHastalarService.cs" />
     <Compile Include="Bussines\Services\Interfaces\IKullanicilarService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\IReceteTurService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\IRecetelerService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\ISatislarService.cs" />
+    <Compile Include="Bussines\Services\Interfaces\IServiceOfWork.cs" />
+    <Compile Include="Bussines\Services\Implementations\ServiceOfWork.cs" />
     <Compile Include="Core\Connection.cs" />
+    <Compile Include="Domain\Entities\Doktorlar.cs" />
     <Compile Include="Domain\Entities\Ilaclar.cs" />
+    <Compile Include="Domain\Entities\Hastalar.cs" />
+    <Compile Include="Domain\Entities\Kategoriler.cs" />
     <Compile Include="Domain\Entities\Kullanicilar.cs" />
+    <Compile Include="Domain\Entities\ReceteDetay.cs" />
+    <Compile Include="Domain\Entities\ReceteTurleri.cs" />
+    <Compile Include="Domain\Entities\Receteler.cs" />
+    <Compile Include="Domain\Entities\SatisDetay.cs" />
+    <Compile Include="Domain\Entities\Satislar.cs" />
+    <Compile Include="Domain\Interfaces\IDoktorlarRepository.cs" />
     <Compile Include="Domain\Interfaces\IIlaclarRepository.cs" />
+    <Compile Include="Domain\Interfaces\IHastalarRepository.cs" />
+    <Compile Include="Domain\Interfaces\IKategoriRepository.cs" />
     <Compile Include="Domain\Interfaces\IKullanicilarRepository.cs" />
+    <Compile Include="Domain\Interfaces\IReceteDetayRepository.cs" />
+    <Compile Include="Domain\Interfaces\IReceteTurRepository.cs" />
+    <Compile Include="Domain\Interfaces\IRecetelerRepository.cs" />
+    <Compile Include="Domain\Interfaces\ISatisDetayRepository.cs" />
+    <Compile Include="Domain\Interfaces\ISatislarRepository.cs" />
     <Compile Include="Domain\Interfaces\IUnitOfWork.cs" />
     <Compile Include="Domain\IRepositoryBase.cs" />
+    <Compile Include="Infrastructure\Repositories\DoktorlarRepository.cs" />
     <Compile Include="Infrastructure\Repositories\IlaclarRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\HastalarRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\KategoriRepository.cs" />
     <Compile Include="Infrastructure\Repositories\KullanicilarRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\ReceteDetayRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\ReceteTurRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\RecetelerRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\SatisDetayRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\SatislarRepository.cs" />
     <Compile Include="Infrastructure\Repositories\RepositoryBase.cs" />
     <Compile Include="Infrastructure\UnitOfWork.cs" />
     <Compile Include="UI\FrmIlacEkle.cs">
@@ -91,13 +131,84 @@
     <Compile Include="UI\Frmlogin.Designer.cs">
       <DependentUpon>Frmlogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\FrmHastaRecete.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\UcDuzenlemeArayuz.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\UcDuzenlemeArayuz.Designer.cs">
+      <DependentUpon>UcDuzenlemeArayuz.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\AdminPage.cs" />
+    <Compile Include="UI\Admin\AdminUi.cs" />
+    <Compile Include="UI\Admin\FrmAdminDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\FrmAdminDashboard.Designer.cs">
+      <DependentUpon>FrmAdminDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminDashboardHome.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminDashboardHome.Designer.cs">
+      <DependentUpon>UcAdminDashboardHome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminUsers.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminUsers.Designer.cs">
+      <DependentUpon>UcAdminUsers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminCategories.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminCategories.Designer.cs">
+      <DependentUpon>UcAdminCategories.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminDoctors.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminDoctors.Designer.cs">
+      <DependentUpon>UcAdminDoctors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminPatients.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminPatients.Designer.cs">
+      <DependentUpon>UcAdminPatients.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminStockRules.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminStockRules.Designer.cs">
+      <DependentUpon>UcAdminStockRules.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminSettings.Designer.cs">
+      <DependentUpon>UcAdminSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\UserControl\UcIlacStok.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\UserControl\UcIlacStok.Designer.cs">
       <DependentUpon>UcIlacStok.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\UcHastaRecete.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\UcHastaRecete.Designer.cs">
+      <DependentUpon>UcHastaRecete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\UcSatisFatura.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\UcSatisFatura.Designer.cs">
+      <DependentUpon>UcSatisFatura.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="UI\FrmIlacEkle.resx">
       <DependentUpon>FrmIlacEkle.cs</DependentUpon>

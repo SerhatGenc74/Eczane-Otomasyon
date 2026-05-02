@@ -1,4 +1,4 @@
-﻿using EczaneOtomasyon.Domain;
+using EczaneOtomasyon.Domain;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -36,7 +36,7 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
                 exp = (MemberExpression)expression.Body;
             }
             return exp.Member.Name;
-            
+
         }
         private Tentity MapDataReaderToEntity(SqlDataReader dr)
         {
@@ -55,7 +55,7 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
         #region
         public List<Tentity> GetByColumn(Expression<Func<Tentity, object>> properyselector, object value,string sqloperator = "=")
         {
-            
+
             var list = new List<Tentity>();
             var column = GetPropertyName(properyselector);
             using (SqlConnection conn = Connection.GetConnection())
@@ -105,8 +105,8 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
 
                 string columns = string.Join(", ", props.Select(p => p.Name));
                 string parameters = string.Join(", ", props.Select(p => "@" + p.Name));
-                    
-                
+
+
                 string query = $"INSERT INTO {_tablename} ({columns}) VALUES ({parameters})";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -138,7 +138,7 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
         {
             using (SqlConnection conn = Connection.GetConnection()) {
                 var pk_prop = GetKeyProperty();
-                var props = values.GetType().GetProperties();
+                var props = values.GetType().GetProperties().Where(p => p != pk_prop).ToList();
 
                 string set_clause = string.Join(", ", props.Select(p => p.Name + " = @" + p.Name));
 
@@ -155,7 +155,7 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
 
                 return cmd.ExecuteNonQuery() > 0;
             } 
-        
+
         }
 
         public List<Tentity> GetAll()

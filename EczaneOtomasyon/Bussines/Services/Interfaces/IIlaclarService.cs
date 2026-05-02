@@ -16,5 +16,6 @@ namespace EczaneOtomasyon.Bussines.Services.Interfaces
 
         List<Ilaclar> KritikStoktakiIlaclariGetir();
         List<Ilaclar> MiadiYaklasanIlaclariGetir(int kacGunKaldi = 30);
+        List<Ilaclar> IlacAra(string aramaKelimesi);
     }
 }

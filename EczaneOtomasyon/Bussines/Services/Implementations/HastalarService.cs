@@ -63,6 +63,15 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
 
         public bool HastaSil(int hastaId)
         {
+            var receteler = _unitOfWork.Receteler.GetByColumn(x => x.HastaID, hastaId);
+            foreach (var recete in receteler)
+            {
+                if (!_unitOfWork.Receteler.Update(recete.ReceteID, new { HastaID = (int?)null }))
+                {
+                    return false;
+                }
+            }
+
             return _unitOfWork.Hastalar.Delete(hastaId);
         }
     }

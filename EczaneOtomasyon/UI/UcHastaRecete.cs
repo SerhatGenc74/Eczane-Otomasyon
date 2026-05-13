@@ -265,6 +265,9 @@ namespace EczaneOtomasyon.UI
             SelectComboValue(_cmbCinsiyet, row.Cells["Cinsiyet"].Value);
             SelectComboValue(_cmbKanGrubu, row.Cells["KanGrubu"].Value);
             _txtAlerji.Text = Convert.ToString(row.Cells["AlerjiBilgisi"].Value);
+
+            var hasta = _hastalarService.GetHastaById(_selectedHastaId.Value);
+            SetSelectedHasta(hasta);
         }
 
         private void DgwReceteler_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -277,7 +280,20 @@ namespace EczaneOtomasyon.UI
             var row = _dgwReceteler.Rows[e.RowIndex];
             _selectedReceteId = Convert.ToInt32(row.Cells["ReceteID"].Value);
             _txtReceteKodu.Text = Convert.ToString(row.Cells["ReceteKodu"].Value);
-            SelectComboValue(_cmbHasta, row.Cells["HastaID"].Value);
+
+            // Hasta bilgisi (TC ile arama alanına yaz)
+            var hastaIdObj = row.Cells["HastaID"].Value;
+            if (hastaIdObj != null && hastaIdObj != DBNull.Value)
+            {
+                _selectedHastaId = Convert.ToInt32(hastaIdObj);
+                var hasta = _hastalarService.GetHastaById(_selectedHastaId.Value);
+                SetSelectedHasta(hasta);
+            }
+            else
+            {
+                SetSelectedHasta(null);
+            }
+
             SelectComboValue(_cmbDoktor, row.Cells["DoktorID"].Value);
             SelectComboValue(_cmbReceteTuru, row.Cells["ReceteTipiID"].Value);
 
@@ -289,6 +305,28 @@ namespace EczaneOtomasyon.UI
 
             _chkDurum.Checked = string.Equals(Convert.ToString(row.Cells["Durum"].Value), "Aktif", StringComparison.OrdinalIgnoreCase);
             RefreshDetayData();
+        }
+
+        private void BtnReceteHastaBul_Click(object sender, EventArgs e)
+        {
+            var tc = _txtReceteHastaTc.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(tc))
+            {
+                MessageBox.Show("Lütfen hasta TC no girin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var hasta = _hastalarService.GetAllHastalar()
+                .FirstOrDefault(h => string.Equals((h.TCKimlikNo ?? string.Empty).Trim(), tc, StringComparison.OrdinalIgnoreCase));
+
+            if (hasta == null)
+            {
+                MessageBox.Show("Bu TC ile hasta bulunamadı.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                SetSelectedHasta(null);
+                return;
+            }
+
+            SetSelectedHasta(hasta);
         }
 
         private void DgwDetaylar_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -307,11 +345,6 @@ namespace EczaneOtomasyon.UI
 
         private void RefreshLookupData()
         {
-            var hastalar = _hastalarService.GetAllHastalar();
-            _cmbHasta.DataSource = hastalar.Select(h => new KeyValuePair<int, string>(h.HastaID, string.Format("{0} {1}", h.Ad, h.Soyad).Trim())).ToList();
-            _cmbHasta.DisplayMember = "Value";
-            _cmbHasta.ValueMember = "Key";
-
             var doktorlar = _doktorlarService.GetDoktorlar();
             _cmbDoktor.DataSource = doktorlar.ToList();
             _cmbDoktor.DisplayMember = "Value";
@@ -421,17 +454,16 @@ namespace EczaneOtomasyon.UI
 
         private Receteler BuildReceteFromForm()
         {
-            var hastaId = GetSelectedComboIntValue(_cmbHasta);
-            if (!hastaId.HasValue)
+            if (!_selectedHastaId.HasValue)
             {
-                MessageBox.Show("Lütfen bir hasta seçin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Lütfen hasta TC ile arayıp seçin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return null;
             }
 
             return new Receteler
             {
                 ReceteKodu = string.IsNullOrWhiteSpace(_txtReceteKodu.Text) ? GenerateReceteKodu() : _txtReceteKodu.Text.Trim(),
-                HastaID = hastaId.Value,
+                HastaID = _selectedHastaId.Value,
                 DoktorID = GetSelectedComboIntValue(_cmbDoktor),
                 ReceteTipiID = GetSelectedComboIntValue(_cmbReceteTuru),
                 Tarih = _dtTarih.Value,
@@ -461,11 +493,33 @@ namespace EczaneOtomasyon.UI
         {
             _selectedReceteId = null;
             _txtReceteKodu.Text = GenerateReceteKodu();
-            if (_cmbHasta.Items.Count > 0) _cmbHasta.SelectedIndex = 0;
+            SetSelectedHasta(null);
             if (_cmbDoktor.Items.Count > 0) _cmbDoktor.SelectedIndex = 0;
             if (_cmbReceteTuru.Items.Count > 0) _cmbReceteTuru.SelectedIndex = 0;
             _dtTarih.Value = DateTime.Now;
             _chkDurum.Checked = true;
+        }
+
+        private void SetSelectedHasta(Hastalar hasta)
+        {
+            if (hasta == null)
+            {
+                _selectedHastaId = null;
+                _txtReceteHastaTc.Text = string.Empty;
+                return;
+            }
+
+            _selectedHastaId = hasta.HastaID;
+            _txtReceteHastaTc.Text = (hasta.TCKimlikNo ?? string.Empty).Trim();
+
+            // Hasta bilgilerini sol formda da göster
+            _txtTc.Text = (hasta.TCKimlikNo ?? string.Empty).Trim();
+            _txtAd.Text = hasta.Ad;
+            _txtSoyad.Text = hasta.Soyad;
+            _txtTelefon.Text = hasta.Telefon;
+            SelectComboValue(_cmbCinsiyet, hasta.Cinsiyet);
+            SelectComboValue(_cmbKanGrubu, hasta.KanGrubu);
+            _txtAlerji.Text = hasta.AlerjiBilgisi;
         }
 
         private void ClearDetayForm()

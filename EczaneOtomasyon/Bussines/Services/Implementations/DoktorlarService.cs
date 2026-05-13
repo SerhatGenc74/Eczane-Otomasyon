@@ -48,6 +48,15 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
 
         public bool DoktorSil(int doktorId)
         {
+            var receteler = _unitOfWork.Receteler.GetByColumn(x => x.DoktorID, doktorId);
+            foreach (var recete in receteler)
+            {
+                if (!_unitOfWork.Receteler.Update(recete.ReceteID, new { DoktorID = (int?)null }))
+                {
+                    return false;
+                }
+            }
+
             return _unitOfWork.Doktorlar.Delete(doktorId);
         }
     }

@@ -35,6 +35,25 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
 
         public bool IlacSil(int ilacId)
         {
+            // Satış/prescription detaylarında ilaç referansını kaldır (IlacID nullable)
+            var satisDetaylar = _db.SatisDetay.GetByColumn(x => x.IlacID, ilacId);
+            foreach (var det in satisDetaylar)
+            {
+                if (!_db.SatisDetay.Update(det.SatisDetayID, new { IlacID = (int?)null }))
+                {
+                    return false;
+                }
+            }
+
+            var receteDetaylar = _db.ReceteDetay.GetByColumn(x => x.IlacID, ilacId);
+            foreach (var det in receteDetaylar)
+            {
+                if (!_db.ReceteDetay.Update(det.DetayID, new { IlacID = (int?)null }))
+                {
+                    return false;
+                }
+            }
+
             return _db.Ilaclar.Delete(ilacId);
         }
 

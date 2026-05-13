@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EczaneOtomasyon.UI
 {
@@ -54,6 +55,11 @@ namespace EczaneOtomasyon.UI
 
         private void btn_ilacekle_Click(object sender, EventArgs e)
         {
+            var frmIlacEkle = Program.ServiceProvider.GetRequiredService<FrmIlacEkle>();
+            if (frmIlacEkle.ShowDialog() == DialogResult.OK)
+            {
+                IlacStokListele(); // İlaç başarıyla eklendiyse tabloyu yenile
+            }
         }
 
         private void IlacAra()
@@ -112,6 +118,12 @@ namespace EczaneOtomasyon.UI
         {
             var yaklasilaclar = _ilaclarService.MiadiYaklasanIlaclariGetir();
             dgw_ilaclar.DataSource = IlaclariGridIcinHazirla(yaklasilaclar);
+        }
+
+        private void btn_tum_ilaclar_Click(object sender, EventArgs e)
+        {
+            txt_find.Text = string.Empty;
+            IlacStokListele();
         }
 
         private void btn_update_stock_Click(object sender, EventArgs e)

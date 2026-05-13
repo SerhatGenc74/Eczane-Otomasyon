@@ -12,7 +12,7 @@ namespace EczaneOtomasyon.UI.Admin
         private readonly IReceteTurService _receteTurService;
         private int? _selectedKategoriId;
         private int? _selectedReceteTurId;
-
+      
         public UcAdminCategories(IKategoriService kategoriService, IReceteTurService receteTurService)
         {
             _kategoriService = kategoriService;

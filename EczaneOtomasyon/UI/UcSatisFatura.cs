@@ -76,7 +76,16 @@ namespace EczaneOtomasyon.UI
 
         private void RefreshSalesGrid(string search = null)
         {
-            var satislar = string.IsNullOrWhiteSpace(search) ? _satislarService.GetAllSatislar() : _satislarService.GetAllSatislar().Where(x => x.FaturaNo != null && x.FaturaNo.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            var satislar = _satislarService.GetAllSatislar();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                satislar = satislar.Where(x => x.FaturaNo != null && x.FaturaNo.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            }
+
+            // Tarihe göre sıralama
+            var desc = _cmbSatisSirala == null || _cmbSatisSirala.SelectedIndex <= 0; // 0: yeniden eskiye
+            satislar = desc ? satislar.OrderByDescending(x => x.Tarih).ToList() : satislar.OrderBy(x => x.Tarih).ToList();
+
             var receteler = _recetelerService.GetAllReceteler().ToDictionary(x => x.ReceteID, x => x.ReceteKodu);
             var users = _kullanicilarService.GetAllUsers().ToDictionary(x => x.KullaniciID, x => x.AdSoyad);
 
@@ -96,7 +105,12 @@ namespace EczaneOtomasyon.UI
                 KullaniciAdi = users.ContainsKey(s.KullaniciID ?? 0) ? users[s.KullaniciID ?? 0] : "-"
             }).ToList();
 
-            HideColumns(_dgwSatislar, "SatisID", "ReceteID", "KullaniciID");
+            HideColumns(_dgwSatislar, "SatisID", "ReceteID", "KullaniciID", "ToplamTutar");
+        }
+
+        private void CmbSatisSirala_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshSalesGrid(_txtSatisAra?.Text);
         }
 
         private void RefreshDraftGrid()
@@ -367,8 +381,7 @@ namespace EczaneOtomasyon.UI
             _lblKullanici.Text = "Kasiyer: " + Convert.ToString(row.Cells["KullaniciAdi"].Value);
             _dtTarih.Value = Convert.ToDateTime(row.Cells["Tarih"].Value);
             _nudIndirim.Value = Convert.ToDecimal(row.Cells["IndirimTutari"].Value);
-            _txtToplam.Text = Convert.ToString(row.Cells["ToplamTutar"].Value);
-            _txtNetTutar.Text = Convert.ToString(row.Cells["NetTutar"].Value);
+            _txtToplam.Text = Convert.ToString(row.Cells["NetTutar"].Value);
             RefreshSaleDetailsGrid();
         }
 
@@ -401,6 +414,8 @@ namespace EczaneOtomasyon.UI
                 return;
             }
 
+            ApplyPrescriptionItemsToDraft(recete.ReceteID);
+
             if (recete.HastaID.HasValue)
             {
                 var hasta = _hastalarService.GetHastaById(recete.HastaID.Value);
@@ -412,6 +427,49 @@ namespace EczaneOtomasyon.UI
             }
 
             _lblReceteHastaName.Text = "-";
+        }
+
+        private void ApplyPrescriptionItemsToDraft(int receteId)
+        {
+            var detaylar = _recetelerService.GetReceteDetaylari(receteId);
+            if (detaylar == null || detaylar.Count == 0)
+            {
+                return;
+            }
+
+            var ilacMap = _ilaclarService.TumIlaclariGetir().ToDictionary(x => x.IlacID, x => x);
+
+            _geciciDetaylar.Clear();
+            _geciciKalemId = -1;
+            _selectedKalemId = null;
+
+            var grouped = detaylar
+                .Where(d => d.IlacID.HasValue)
+                .GroupBy(d => d.IlacID.Value)
+                .Select(g => new { IlacID = g.Key, Adet = g.Sum(x => x.Adet) })
+                .Where(x => x.Adet > 0)
+                .ToList();
+
+            foreach (var item in grouped)
+            {
+                if (!ilacMap.TryGetValue(item.IlacID, out var ilac))
+                {
+                    continue;
+                }
+
+                var detay = new SatisDetay
+                {
+                    SatisDetayID = _geciciKalemId--,
+                    IlacID = item.IlacID,
+                    Adet = item.Adet,
+                    SatisBirimFiyati = ilac.BirimFiyat,
+                    AraToplam = ilac.BirimFiyat * item.Adet
+                };
+                _geciciDetaylar.Add(detay);
+            }
+
+            RefreshDraftGrid();
+            UpdateTotals();
         }
 
         private void DgwSatisDetay_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -435,8 +493,7 @@ namespace EczaneOtomasyon.UI
                 net = 0;
             }
 
-            _txtToplam.Text = toplam.ToString("0.00");
-            _txtNetTutar.Text = net.ToString("0.00");
+            _txtToplam.Text = net.ToString("0.00");
             _txtAraToplam.Text = _cmbIlac.SelectedValue == null ? string.Empty : _txtAraToplam.Text;
         }
 
@@ -454,7 +511,7 @@ namespace EczaneOtomasyon.UI
             _nudAdet.Value = 1;
             _txtBirimFiyat.Clear();
             _txtAraToplam.Clear();
-            _txtKullanimSekli.Clear();
+           
         }
 
         private Satislar BuildSaleFromHeader()
@@ -469,11 +526,18 @@ namespace EczaneOtomasyon.UI
             int? receteId = null;
             if (_rbReceteli.Checked && !string.IsNullOrWhiteSpace(_txtReceteAra.Text))
             {
-                var recete = _recetelerService.GetAllReceteler().FirstOrDefault(x => x.ReceteKodu == _txtReceteAra.Text.Trim());
+                var kode = _txtReceteAra.Text.Trim();
+                var recete = _recetelerService.GetAllReceteler().FirstOrDefault(x => string.Equals(x.ReceteKodu, kode, StringComparison.OrdinalIgnoreCase));
                 if (recete != null)
                 {
                     receteId = recete.ReceteID;
                 }
+            }
+
+            if (_rbReceteli.Checked && !receteId.HasValue)
+            {
+                MessageBox.Show("Reçeteli satış için geçerli bir reçete seçin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return null;
             }
 
             return new Satislar

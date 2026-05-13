@@ -47,6 +47,26 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
 
         public bool ReceteSil(int receteId)
         {
+            // Reçeteye bağlı satış varsa önce bağlantıyı kaldır (ReceteID nullable)
+            var satislar = _unitOfWork.Satislar.GetByColumn(x => x.ReceteID, receteId);
+            foreach (var satis in satislar)
+            {
+                if (!_unitOfWork.Satislar.Update(satis.SatisID, new { ReceteID = (int?)null }))
+                {
+                    return false;
+                }
+            }
+
+            // Reçete detaylarını sil
+            var detaylar = _unitOfWork.ReceteDetay.GetByColumn(x => x.ReceteID, receteId);
+            foreach (var detay in detaylar)
+            {
+                if (!_unitOfWork.ReceteDetay.Delete(detay.DetayID))
+                {
+                    return false;
+                }
+            }
+
             return _unitOfWork.Receteler.Delete(receteId);
         }
 

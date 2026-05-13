@@ -10,6 +10,7 @@ namespace EczaneOtomasyon.UI.Admin
         private FlowLayoutPanel _menuPanel;
         private Label _headerLabel;
         private Label _userLabel;
+        private Button _btnLogout;
         private Panel _contentPanel;
 
         private void InitializeComponent()
@@ -19,6 +20,7 @@ namespace EczaneOtomasyon.UI.Admin
             _menuPanel = new FlowLayoutPanel();
             _headerLabel = new Label();
             _userLabel = new Label();
+            _btnLogout = new Button();
             _contentPanel = new Panel();
 
             SuspendLayout();
@@ -52,7 +54,20 @@ namespace EczaneOtomasyon.UI.Admin
             _userLabel.Font = new Font("Calibri", 10F);
             _userLabel.Padding = new Padding(16, 8, 8, 8);
 
+            _btnLogout.Text = "Oturumu Kapat";
+            _btnLogout.Dock = DockStyle.Bottom;
+            _btnLogout.Height = 44;
+            _btnLogout.BackColor = Color.FromArgb(30, 41, 59);
+            _btnLogout.ForeColor = Color.White;
+            _btnLogout.FlatStyle = FlatStyle.Flat;
+            _btnLogout.Font = new Font("Calibri", 10F, FontStyle.Bold);
+            _btnLogout.Padding = new Padding(12, 0, 0, 0);
+            _btnLogout.TextAlign = ContentAlignment.MiddleLeft;
+            _btnLogout.Cursor = Cursors.Hand;
+            _btnLogout.FlatAppearance.BorderSize = 0;
+
             _sidebarPanel.Controls.Add(_menuPanel);
+            _sidebarPanel.Controls.Add(_btnLogout);
             _sidebarPanel.Controls.Add(_userLabel);
             _sidebarPanel.Controls.Add(_headerLabel);
 

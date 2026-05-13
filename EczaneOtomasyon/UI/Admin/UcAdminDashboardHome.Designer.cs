@@ -51,7 +51,7 @@ namespace EczaneOtomasyon.UI.Admin
             grid.Controls.Add(AdminUi.CreateCard("Doktor Yönetimi", "Doktor bilgisi ve kurum kayıtları", Color.FromArgb(249, 115, 22), (s, e) => Raise(AdminPage.Doctors)), 0, 1);
             grid.Controls.Add(AdminUi.CreateCard("Hasta Düzenleme", "Hasta iletişim, alerji, kan grubu güncelle", Color.FromArgb(168, 85, 247), (s, e) => Raise(AdminPage.Patients)), 1, 1);
             grid.Controls.Add(AdminUi.CreateCard("Stok Kontrolü", "Kritik seviye, raf no ve alarm ayarları", Color.FromArgb(244, 63, 94), (s, e) => Raise(AdminPage.StockRules)), 0, 2);
-            grid.Controls.Add(CreateEmptyCard(), 1, 2);
+            grid.Controls.Add(AdminUi.CreateCard("İlaç Yönetimi", "İlaç ekle, güncelle, sil", Color.FromArgb(59, 130, 246), (s, e) => Raise(AdminPage.Medicines)), 1, 2);
 
             return grid;
         }

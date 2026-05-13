@@ -29,6 +29,15 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
 
         public bool DeleteUser(int id)
         {
+            var satislar = _db.Satislar.GetByColumn(x => x.KullaniciID, id);
+            foreach (var satis in satislar)
+            {
+                if (!_db.Satislar.Update(satis.SatisID, new { KullaniciID = (int?)null }))
+                {
+                    return false;
+                }
+            }
+
             return _db.Kullanicilar.Delete(id);
         }
 

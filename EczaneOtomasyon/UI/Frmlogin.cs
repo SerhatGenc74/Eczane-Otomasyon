@@ -1,4 +1,4 @@
-﻿using EczaneOtomasyon.Bussines.Services.Interfaces;
+﻿﻿using EczaneOtomasyon.Bussines.Services.Interfaces;
 using EczaneOtomasyon.UI;
 using EczaneOtomasyon.UI.Admin;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +19,14 @@ namespace EczaneOtomasyon
     {
         IKullanicilarService _kullanicilarService;
         IAuthService _authService;
-        public Frmlogin(IKullanicilarService _kullanicilarService, IAuthService authService)
+        IIlaclarService _ilaclarService;
+        private bool isDarkMode = false;
+
+        public Frmlogin(IKullanicilarService kullanicilarService, IAuthService authService, IIlaclarService ilaclarService)
         {
-            this._kullanicilarService = _kullanicilarService;
+            this._kullanicilarService = kullanicilarService;
             this._authService = authService;
+            this._ilaclarService = ilaclarService;
             InitializeComponent();
         }
         private void GetControl(UserControl control)
@@ -31,6 +35,7 @@ namespace EczaneOtomasyon
             control.Dock = DockStyle.Fill;
             pnl_content.Controls.Add(control);
             control.BringToFront();
+            if (isDarkMode) ApplyTheme(pnl_content.Controls, true);
         }
         private void btn_login_Click(object sender, EventArgs e)
         {
@@ -48,12 +53,16 @@ namespace EczaneOtomasyon
                     case "Personel":
                         pnl_login.Hide();
                         pnl_Ilaclar.Show();
+                        button3.Visible = false;
                         OpenHastaReceteModulu();
+                        CheckNotifications();
                         break;
                     default:
                         pnl_login.Hide();
                         pnl_Ilaclar.Show();
+                        button3.Visible = false;
                         OpenIlacModulu();
+                        CheckNotifications();
                         break;
 
                 }
@@ -88,6 +97,13 @@ namespace EczaneOtomasyon
 
         private void btn_DuzenlemeArayuz_Click(object sender, EventArgs e)
         {
+            var current = _authService?.GetCurrentUser();
+            if (current == null || !string.Equals(current.Rol, "Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Bu modüle erişim yetkiniz yok.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var duzenlemeSayfasi = Program.ServiceProvider.GetRequiredService<UcDuzenlemeArayuz>();
             GetControl(duzenlemeSayfasi);
         }
@@ -130,6 +146,96 @@ namespace EczaneOtomasyon
         {
             var hastaReceteSayfasi = Program.ServiceProvider.GetRequiredService<UcHastaRecete>();
             GetControl(hastaReceteSayfasi);
+        }
+
+        private void btn_Theme_Click(object sender, EventArgs e)
+        {
+            isDarkMode = !isDarkMode;
+            if (isDarkMode)
+            {
+                btn_Theme.Text = "☀️ Aydınlık Tema";
+                pnl_header.BackColor = Color.FromArgb(30, 41, 59);
+                lbl_topbar_title.ForeColor = Color.White;
+                pnl_content.BackColor = Color.FromArgb(15, 23, 42);
+            }
+            else
+            {
+                btn_Theme.Text = "🌙 Karanlık Tema";
+                pnl_header.BackColor = Color.White;
+                lbl_topbar_title.ForeColor = Color.FromArgb(51, 65, 85);
+                pnl_content.BackColor = Color.WhiteSmoke;
+            }
+            ApplyTheme(pnl_content.Controls, isDarkMode);
+        }
+
+        private void ApplyTheme(Control.ControlCollection controls, bool dark)
+        {
+            foreach (Control ctrl in controls)
+            {
+                if (ctrl is Panel || ctrl is UserControl)
+                {
+                    ctrl.BackColor = dark ? Color.FromArgb(30, 41, 59) : Color.White;
+                    ApplyTheme(ctrl.Controls, dark);
+                }
+                else if (ctrl is Label || ctrl is RadioButton || ctrl is CheckBox)
+                {
+                    ctrl.ForeColor = dark ? Color.White : Color.FromArgb(51, 65, 85);
+                }
+                else if (ctrl is DataGridView dgv)
+                {
+                    dgv.BackgroundColor = dark ? Color.FromArgb(15, 23, 42) : Color.White;
+                    dgv.ColumnHeadersDefaultCellStyle.BackColor = dark ? Color.FromArgb(30, 41, 59) : Color.FromArgb(45, 62, 100);
+                    dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                    dgv.DefaultCellStyle.BackColor = dark ? Color.FromArgb(30, 41, 59) : Color.White;
+                    dgv.DefaultCellStyle.ForeColor = dark ? Color.White : Color.Black;
+                }
+                else if (ctrl is TableLayoutPanel || ctrl is FlowLayoutPanel)
+                {
+                    ctrl.BackColor = Color.Transparent;
+                    ApplyTheme(ctrl.Controls, dark);
+                }
+            }
+        }
+
+        private void CheckNotifications()
+        {
+            var kritikList = _ilaclarService.KritikStoktakiIlaclariGetir();
+            var miadList = _ilaclarService.MiadiYaklasanIlaclariGetir();
+            int totalWarning = (kritikList?.Count ?? 0) + (miadList?.Count ?? 0);
+
+            if (totalWarning > 0)
+            {
+                ShowToast($"Dikkat: Kritik stok veya SKT'si yaklaşan toplam {totalWarning} ilaç var!");
+            }
+        }
+
+        private void ShowToast(string message)
+        {
+            Panel pnlToast = new Panel();
+            pnlToast.Size = new Size(400, 70);
+            pnlToast.BackColor = Color.FromArgb(220, 53, 69);
+            pnlToast.ForeColor = Color.White;
+            pnlToast.Location = new Point(pnl_Ilaclar.Width - 420, pnl_Ilaclar.Height - 90);
+            pnlToast.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+
+            Label lblMsg = new Label();
+            lblMsg.Text = message;
+            lblMsg.Dock = DockStyle.Fill;
+            lblMsg.TextAlign = ContentAlignment.MiddleCenter;
+            lblMsg.Font = new Font("Segoe UI Semibold", 11);
+
+            pnlToast.Controls.Add(lblMsg);
+            pnl_Ilaclar.Controls.Add(pnlToast);
+            pnlToast.BringToFront();
+
+            Timer t = new Timer();
+            t.Interval = 6000;
+            t.Tick += (s, e) => {
+                pnl_Ilaclar.Controls.Remove(pnlToast);
+                t.Stop();
+                t.Dispose();
+            };
+            t.Start();
         }
     }
 }

@@ -19,19 +19,18 @@ namespace EczaneOtomasyon.UI
         private DateTimePicker _dtTarih;
         private NumericUpDown _nudIndirim;
         private TextBox _txtToplam;
-        private TextBox _txtNetTutar;
 
         private ComboBox _cmbIlac;
         private NumericUpDown _nudAdet;
         private TextBox _txtBirimFiyat;
         private TextBox _txtAraToplam;
-        private TextBox _txtKullanimSekli;
         private Button _btnKalemEkle;
         private Button _btnKalemSil;
         private DataGridView _dgwKalemler;
 
         private TextBox _txtSatisAra;
         private Button _btnSatisAra;
+        private ComboBox _cmbSatisSirala;
         private DataGridView _dgwSatislar;
         private DataGridView _dgwSatisDetay;
 
@@ -42,24 +41,6 @@ namespace EczaneOtomasyon.UI
             Dock = DockStyle.Fill;
             BackColor = Color.FromArgb(241, 245, 249);
 
-            var title = new Label
-            {
-                Dock = DockStyle.Top,
-                Height = 56,
-                Text = "Satış ve Fatura Modülü",
-                Font = new Font("Segoe UI", 15F, FontStyle.Bold),
-                Padding = new Padding(16, 14, 16, 0)
-            };
-
-            var subTitle = new Label
-            {
-                Dock = DockStyle.Top,
-                Height = 34,
-                Text = "Fatura başlığı, satış kalemleri ve geçmiş satışlar tek ekranda.",
-                ForeColor = Color.FromArgb(71, 85, 105),
-                Font = new Font("Segoe UI", 9.5F),
-                Padding = new Padding(16, 0, 16, 0)
-            };
 
             var body = new TableLayoutPanel
             {
@@ -75,8 +56,6 @@ namespace EczaneOtomasyon.UI
             body.Controls.Add(BuildSaleListPanel(), 1, 0);
 
             Controls.Add(body);
-            Controls.Add(subTitle);
-            Controls.Add(title);
 
             Load += UcSatisFatura_Load;
 
@@ -98,7 +77,7 @@ namespace EczaneOtomasyon.UI
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 140F));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 115F));
 
             root.Controls.Add(CreateSectionTitle("Satış Başlığı"), 0, 0);
             root.Controls.Add(BuildHeaderForm(), 0, 1);
@@ -187,8 +166,6 @@ namespace EczaneOtomasyon.UI
             _nudIndirim.ValueChanged += NudIndirim_ValueChanged;
             _txtToplam = CreateTextBox();
             _txtToplam.ReadOnly = true;
-            _txtNetTutar = CreateTextBox();
-            _txtNetTutar.ReadOnly = true;
 
             form.Controls.Add(CreateLabel("Fatura No"), 0, 0);
             form.Controls.Add(_txtFaturaNo, 1, 0);
@@ -225,7 +202,7 @@ namespace EczaneOtomasyon.UI
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 4,
-                RowCount = 3
+                RowCount = 4
             };
 
             form.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 92F));
@@ -234,11 +211,14 @@ namespace EczaneOtomasyon.UI
             form.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
 
             form.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            form.RowStyles.Add(new RowStyle(SizeType.Absolute, 68F));
             form.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            form.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
+            form.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
 
             _cmbIlac = CreateComboBox();
             _cmbIlac.DropDownStyle = ComboBoxStyle.DropDown; // allow typing/search
+            _cmbIlac.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            _cmbIlac.AutoCompleteSource = AutoCompleteSource.ListItems;
             _cmbIlac.SelectedIndexChanged += CmbIlac_SelectedIndexChanged;
             _nudAdet = new NumericUpDown
             {
@@ -252,17 +232,16 @@ namespace EczaneOtomasyon.UI
             _txtBirimFiyat.ReadOnly = true;
             _txtAraToplam = CreateTextBox();
             _txtAraToplam.ReadOnly = true;
-            _txtKullanimSekli = new TextBox
-            {
-                Dock = DockStyle.Fill,
-                Multiline = true,
-                ScrollBars = ScrollBars.Vertical,
-                Font = new Font("Segoe UI", 9.5F)
-            };
-
+          
             _btnKalemEkle = CreateActionButton("Sepete Ekle", Color.FromArgb(14, 116, 144));
+            _btnKalemEkle.Dock = DockStyle.Top;
+            _btnKalemEkle.Height = 34;
+            _btnKalemEkle.Margin = new Padding(3, 0, 3, 0);
             _btnKalemEkle.Click += BtnKalemEkle_Click;
             _btnKalemSil = CreateActionButton("Kalem Sil", Color.FromArgb(220, 38, 38));
+            _btnKalemSil.Dock = DockStyle.Top;
+            _btnKalemSil.Height = 34;
+            _btnKalemSil.Margin = new Padding(3, 0, 3, 0);
             _btnKalemSil.Click += BtnKalemSil_Click;
 
             form.Controls.Add(CreateLabel("İlaç"), 0, 0);
@@ -275,20 +254,9 @@ namespace EczaneOtomasyon.UI
             form.Controls.Add(CreateLabel("Ara Toplam"), 2, 1);
             form.Controls.Add(_txtAraToplam, 3, 1);
 
-            form.Controls.Add(CreateLabel("Kullanım"), 0, 2);
-            form.Controls.Add(_txtKullanimSekli, 1, 2);
-            form.SetColumnSpan(_txtKullanimSekli, 2);
-
-            var buttons = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                ColumnCount = 2
-            };
-            buttons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            buttons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            buttons.Controls.Add(_btnKalemEkle, 0, 0);
-            buttons.Controls.Add(_btnKalemSil, 1, 0);
-            form.Controls.Add(buttons, 3, 2);
+            // Butonları textbox kolonlarıyla aynı hizada yerleştir
+            form.Controls.Add(_btnKalemEkle, 1, 2);
+            form.Controls.Add(_btnKalemSil, 3, 2);
 
             return form;
         }
@@ -298,61 +266,55 @@ namespace EczaneOtomasyon.UI
             var bar = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                ColumnCount = 2
+                ColumnCount = 2,
+                RowCount = 1
             };
             bar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
             bar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
+            bar.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
 
-            var actions = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
+            var actions = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 2 };
             actions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             actions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            var btnKaydet = CreateActionButton("Satışı Tamamla / Kaydet", Color.FromArgb(22, 163, 74));
+            actions.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            actions.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
+            var btnKaydet = CreateActionButton("Satışı Tamamla", Color.FromArgb(22, 163, 74));
+            btnKaydet.Text = "Satışı Tamamla";
             btnKaydet.Click += BtnSatisKaydet_Click;
-            var btnIptal = CreateActionButton("İptal / Yeni Satış", Color.FromArgb(220, 38, 38));
+            var btnIptal = CreateActionButton("Yeni Satış", Color.FromArgb(220, 38, 38));
+            btnIptal.Text = "Yeni Satış";
             btnIptal.Click += BtnYeni_Click;
-            actions.Controls.Add(btnKaydet, 0, 0);
-            actions.Controls.Add(btnIptal, 1, 0);
+            actions.Controls.Add(btnKaydet, 0, 1);
+            actions.Controls.Add(btnIptal, 1, 1);
 
             var totalsPanel = new Panel { Dock = DockStyle.Fill };
-            var totalsLayout = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 3 };
-            totalsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 33F));
-            totalsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 33F));
-            totalsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 34F));
+            var totalsLayout = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 2 };
+            totalsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            totalsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
 
-            var lblAraToplamTitle = new Label { Text = "Ara Toplam", Dock = DockStyle.Fill, TextAlign = ContentAlignment.BottomRight };
-            _txtToplam.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            _txtToplam.TextAlign = HorizontalAlignment.Right;
-            _txtToplam.ReadOnly = true;
 
             var lblIndirimTitle = new Label { Text = "İndirim Tutarı", Dock = DockStyle.Fill, TextAlign = ContentAlignment.BottomRight };
             _nudIndirim.Dock = DockStyle.Fill;
 
-            var lblNetTitle = new Label { Text = "Ödenecek Net Tutar", Dock = DockStyle.Fill, TextAlign = ContentAlignment.BottomRight };
-            _txtNetTutar.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            _txtNetTutar.TextAlign = HorizontalAlignment.Right;
-            _txtNetTutar.ReadOnly = true;
+            var lblNetTitle = new Label { Text = "Ödenecek Tutar", Dock = DockStyle.Fill, TextAlign = ContentAlignment.BottomRight };
+            _txtToplam.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            _txtToplam.TextAlign = HorizontalAlignment.Right;
+            _txtToplam.ReadOnly = true;
 
             var row1 = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
             row1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             row1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            row1.Controls.Add(lblAraToplamTitle, 0, 0);
-            row1.Controls.Add(_txtToplam, 1, 0);
+            row1.Controls.Add(lblIndirimTitle, 0, 0);
+            row1.Controls.Add(_nudIndirim, 1, 0);
 
             var row2 = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
             row2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             row2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            row2.Controls.Add(lblIndirimTitle, 0, 0);
-            row2.Controls.Add(_nudIndirim, 1, 0);
-
-            var row3 = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
-            row3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-            row3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            row3.Controls.Add(lblNetTitle, 0, 0);
-            row3.Controls.Add(_txtNetTutar, 1, 0);
+            row2.Controls.Add(lblNetTitle, 0, 0);
+            row2.Controls.Add(_txtToplam, 1, 0);
 
             totalsLayout.Controls.Add(row1, 0, 0);
             totalsLayout.Controls.Add(row2, 0, 1);
-            totalsLayout.Controls.Add(row3, 0, 2);
             totalsPanel.Controls.Add(totalsLayout);
 
             bar.Controls.Add(actions, 0, 0);
@@ -372,19 +334,26 @@ namespace EczaneOtomasyon.UI
             var bar = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                ColumnCount = 3
+                ColumnCount = 5
             };
             bar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 95F));
             bar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            bar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+            bar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90F));
+            bar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
+            bar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));
 
             _txtSatisAra = CreateTextBox();
             _btnSatisAra = CreateActionButton("Ara", Color.FromArgb(30, 64, 175));
             _btnSatisAra.Click += BtnSatisAra_Click;
 
+            _cmbSatisSirala = CreateComboBox(new[] { "Yeniden Eskiye", "Eskiden Yeniye" });
+            _cmbSatisSirala.SelectedIndexChanged += CmbSatisSirala_SelectedIndexChanged;
+
             bar.Controls.Add(CreateLabel("Satış Ara"), 0, 0);
             bar.Controls.Add(_txtSatisAra, 1, 0);
             bar.Controls.Add(_btnSatisAra, 2, 0);
+            bar.Controls.Add(CreateLabel("Sıralama"), 3, 0);
+            bar.Controls.Add(_cmbSatisSirala, 4, 0);
             return bar;
         }
 
@@ -473,7 +442,8 @@ namespace EczaneOtomasyon.UI
                 FlatStyle = FlatStyle.Flat,
                 BackColor = backColor,
                 ForeColor = Color.White,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold)
             };
             button.FlatAppearance.BorderSize = 0;
             return button;

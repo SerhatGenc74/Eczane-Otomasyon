@@ -24,6 +24,7 @@ namespace EczaneOtomasyon.UI.Admin
         private UcAdminDoctors _doctors;
         private UcAdminPatients _patients;
         private UcAdminStockRules _stockRules;
+        private UcAdminMedicines _medicines;
 
         public FrmAdminDashboard(IAuthService authService,
             IKullanicilarService kullanicilarService,
@@ -55,6 +56,18 @@ namespace EczaneOtomasyon.UI.Admin
             AddMenuButton(_menuPanel, AdminPage.Doctors, "Doktorlar");
             AddMenuButton(_menuPanel, AdminPage.Patients, "Hastalar");
             AddMenuButton(_menuPanel, AdminPage.StockRules, "Stok Kontrolü");
+            AddMenuButton(_menuPanel, AdminPage.Medicines, "İlaçlar");
+
+            if (_btnLogout != null)
+            {
+                _btnLogout.Click += BtnLogout_Click;
+            }
+        }
+
+        private void BtnLogout_Click(object sender, EventArgs e)
+        {
+            _authService?.SetCurrentUser(null);
+            Close();
         }
 
         private void AddMenuButton(FlowLayoutPanel menu, AdminPage page, string text)
@@ -103,6 +116,8 @@ namespace EczaneOtomasyon.UI.Admin
                     return _patients ?? (_patients = new UcAdminPatients(_hastalarService));
                 case AdminPage.StockRules:
                     return _stockRules ?? (_stockRules = new UcAdminStockRules(_ilaclarService));
+                case AdminPage.Medicines:
+                    return _medicines ?? (_medicines = new UcAdminMedicines(_ilaclarService, _kategoriService, _receteTurService));
                 default:
                     if (_home == null)
                     {

@@ -85,6 +85,7 @@
     <Compile Include="Bussines\Services\Interfaces\IServiceOfWork.cs" />
     <Compile Include="Bussines\Services\Implementations\ServiceOfWork.cs" />
     <Compile Include="Core\Connection.cs" />
+    <Compile Include="Domain\Entities\BaseEntity.cs" />
     <Compile Include="Domain\Entities\Doktorlar.cs" />
     <Compile Include="Domain\Entities\Ilaclar.cs" />
     <Compile Include="Domain\Entities\Hastalar.cs" />
@@ -185,6 +186,12 @@
     </Compile>
     <Compile Include="UI\Admin\UcAdminStockRules.Designer.cs">
       <DependentUpon>UcAdminStockRules.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminMedicines.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Admin\UcAdminMedicines.Designer.cs">
+      <DependentUpon>UcAdminMedicines.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Admin\UcAdminSettings.cs">
       <SubType>UserControl</SubType>

@@ -46,6 +46,15 @@ namespace EczaneOtomasyon.Bussines.Services.Implementations
 
         public bool ReceteTurSil(int turId)
         {
+            var receteler = _unitOfWork.Receteler.GetByColumn(x => x.ReceteTipiID, turId);
+            foreach (var recete in receteler)
+            {
+                if (!_unitOfWork.Receteler.Update(recete.ReceteID, new { ReceteTipiID = (int?)null }))
+                {
+                    return false;
+                }
+            }
+
             return _unitOfWork.ReceteTur.Delete(turId);
         }
     }

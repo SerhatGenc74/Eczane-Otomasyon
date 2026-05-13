@@ -131,7 +131,14 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
 
                 cmd.Parameters.AddWithValue("@id", id);
 
-                return cmd.ExecuteNonQuery() > 0;
+                try
+                {
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+                catch (SqlException)
+                {
+                    return false;
+                }
             }
         }
         public bool Update(int id, object values)
@@ -153,7 +160,14 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
 
                 cmd.Parameters.AddWithValue("@id", id);
 
-                return cmd.ExecuteNonQuery() > 0;
+                try
+                {
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+                catch (SqlException)
+                {
+                    return false;
+                }
             } 
 
         }

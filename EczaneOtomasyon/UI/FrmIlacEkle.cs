@@ -9,12 +9,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace EczaneOtomasyon.UI
 {
     public partial class FrmIlacEkle : Form
     {
         IServiceOfWork _serviceOfWork;
+
+        [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
+        private extern static void ReleaseCapture();
+        [DllImport("user32.DLL", EntryPoint = "SendMessage")]
+        private extern static void SendMessage(System.IntPtr hWnd, int wMsg, int wParam, int lParam);
+
         public FrmIlacEkle(IServiceOfWork serviceOfWork)
         {
             _serviceOfWork = serviceOfWork;
@@ -51,6 +58,12 @@ namespace EczaneOtomasyon.UI
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.StartPosition = FormStartPosition.CenterParent;
+        }
+
+        private void pnl_header_MouseDown(object sender, MouseEventArgs e)
+        {
+            ReleaseCapture();
+            SendMessage(this.Handle, 0x112, 0xf012, 0);
         }
 
         private void FrmIlacEkle_Load(object sender, EventArgs e)

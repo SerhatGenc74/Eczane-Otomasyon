@@ -7,6 +7,7 @@ namespace EczaneOtomasyon.UI.Admin
         Categories,
         Doctors,
         Patients,
-        StockRules
+        StockRules,
+        Medicines
     }
 }

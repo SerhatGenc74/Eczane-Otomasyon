@@ -17,13 +17,14 @@ namespace EczaneOtomasyon.UI
         private TextBox _txtAlerji;
         private Button _btnHastaKaydet;
         private Button _btnHastaGuncelle;
-        private Button _btnHastaSil;
+        // Eczacı panelinde hasta silme kapalı
         private TextBox _txtHastaAra;
         private Button _btnHastaAra;
         private DataGridView _dgwHastalar;
 
         private TextBox _txtReceteKodu;
-        private ComboBox _cmbHasta;
+        private TextBox _txtReceteHastaTc;
+        private Button _btnReceteHastaBul;
         private ComboBox _cmbDoktor;
         private ComboBox _cmbReceteTuru;
         private DateTimePicker _dtTarih;
@@ -47,24 +48,6 @@ namespace EczaneOtomasyon.UI
             Dock = DockStyle.Fill;
             BackColor = Color.FromArgb(241, 245, 249);
 
-            var title = new Label
-            {
-                Dock = DockStyle.Top,
-                Height = 56,
-                Text = "Hasta ve Reçete Modülü",
-                Font = new Font("Segoe UI", 15F, FontStyle.Bold),
-                Padding = new Padding(16, 14, 16, 0)
-            };
-
-            var subTitle = new Label
-            {
-                Dock = DockStyle.Top,
-                Height = 34,
-                Text = "Hasta kaydı, reçete yönetimi, reçete detay satırı ve lookup gösterimi tek ekranda.",
-                ForeColor = Color.FromArgb(71, 85, 105),
-                Font = new Font("Segoe UI", 9.5F),
-                Padding = new Padding(16, 0, 16, 0)
-            };
 
             var body = new TableLayoutPanel
             {
@@ -80,8 +63,6 @@ namespace EczaneOtomasyon.UI
             body.Controls.Add(BuildRecetePanel(), 1, 0);
 
             Controls.Add(body);
-            Controls.Add(subTitle);
-            Controls.Add(title);
 
             Load += UcHastaRecete_Load;
 
@@ -196,22 +177,18 @@ namespace EczaneOtomasyon.UI
             var panel = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                ColumnCount = 3
+                ColumnCount = 2
             };
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.34F));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
 
             _btnHastaKaydet = CreateActionButton("Kaydet", Color.FromArgb(22, 163, 74));
             _btnHastaKaydet.Click += BtnHastaKaydet_Click;
             _btnHastaGuncelle = CreateActionButton("Güncelle", Color.FromArgb(37, 99, 235));
             _btnHastaGuncelle.Click += BtnHastaGuncelle_Click;
-            _btnHastaSil = CreateActionButton("Sil", Color.FromArgb(220, 38, 38));
-            _btnHastaSil.Click += BtnHastaSil_Click;
 
             panel.Controls.Add(_btnHastaKaydet, 0, 0);
             panel.Controls.Add(_btnHastaGuncelle, 1, 0);
-            panel.Controls.Add(_btnHastaSil, 2, 0);
             return panel;
         }
 
@@ -263,8 +240,15 @@ namespace EczaneOtomasyon.UI
             }
 
             _txtReceteKodu = CreateTextBox();
-            _cmbHasta = CreateComboBox();
+            _txtReceteHastaTc = CreateTextBox();
+            _btnReceteHastaBul = CreateActionButton("Bul", Color.FromArgb(30, 64, 175));
+            _btnReceteHastaBul.Click += BtnReceteHastaBul_Click;
+
+
             _cmbDoktor = CreateComboBox();
+            _cmbDoktor.DropDownStyle = ComboBoxStyle.DropDown;
+            _cmbDoktor.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            _cmbDoktor.AutoCompleteSource = AutoCompleteSource.ListItems;
             _cmbReceteTuru = CreateComboBox();
             _dtTarih = new DateTimePicker
             {
@@ -282,8 +266,22 @@ namespace EczaneOtomasyon.UI
 
             form.Controls.Add(CreateLabel("Kod"), 0, 0);
             form.Controls.Add(_txtReceteKodu, 1, 0);
-            form.Controls.Add(CreateLabel("Hasta"), 2, 0);
-            form.Controls.Add(_cmbHasta, 3, 0);
+            form.Controls.Add(CreateLabel("Hasta TC"), 2, 0);
+
+            var hastaTcBox = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 2,
+                RowCount = 2
+            };
+            hastaTcBox.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            hastaTcBox.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
+            hastaTcBox.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
+            hastaTcBox.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            hastaTcBox.Controls.Add(_txtReceteHastaTc, 0, 0);
+            hastaTcBox.Controls.Add(_btnReceteHastaBul, 1, 0);
+
+            form.Controls.Add(hastaTcBox, 3, 0);
 
             form.Controls.Add(CreateLabel("Doktor"), 0, 1);
             form.Controls.Add(_cmbDoktor, 1, 1);
@@ -338,6 +336,9 @@ namespace EczaneOtomasyon.UI
             form.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
 
             _cmbIlac = CreateComboBox();
+            _cmbIlac.DropDownStyle = ComboBoxStyle.DropDown;
+            _cmbIlac.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            _cmbIlac.AutoCompleteSource = AutoCompleteSource.ListItems;
             _nudAdet = new NumericUpDown
             {
                 Dock = DockStyle.Fill,

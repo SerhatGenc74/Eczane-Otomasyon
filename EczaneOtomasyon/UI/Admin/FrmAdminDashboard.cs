@@ -12,7 +12,6 @@ namespace EczaneOtomasyon.UI.Admin
         private readonly IKullanicilarService _kullanicilarService;
         private readonly IKategoriService _kategoriService;
         private readonly IReceteTurService _receteTurService;
-        private readonly IDoktorlarService _doktorlarService;
         private readonly IHastalarService _hastalarService;
         private readonly IIlaclarService _ilaclarService;
 
@@ -21,7 +20,6 @@ namespace EczaneOtomasyon.UI.Admin
         private UcAdminDashboardHome _home;
         private UcAdminUsers _users;
         private UcAdminCategories _categories;
-        private UcAdminDoctors _doctors;
         private UcAdminPatients _patients;
         private UcAdminStockRules _stockRules;
         private UcAdminMedicines _medicines;
@@ -30,7 +28,6 @@ namespace EczaneOtomasyon.UI.Admin
             IKullanicilarService kullanicilarService,
             IKategoriService kategoriService,
             IReceteTurService receteTurService,
-            IDoktorlarService doktorlarService,
             IHastalarService hastalarService,
             IIlaclarService ilaclarService)
         {
@@ -38,7 +35,6 @@ namespace EczaneOtomasyon.UI.Admin
             _kullanicilarService = kullanicilarService;
             _kategoriService = kategoriService;
             _receteTurService = receteTurService;
-            _doktorlarService = doktorlarService;
             _hastalarService = hastalarService;
             _ilaclarService = ilaclarService;
 
@@ -53,7 +49,6 @@ namespace EczaneOtomasyon.UI.Admin
             AddMenuButton(_menuPanel, AdminPage.Home, "Ana Sayfa");
             AddMenuButton(_menuPanel, AdminPage.Users, "Kullanıcılar");
             AddMenuButton(_menuPanel, AdminPage.Categories, "Kategoriler");
-            AddMenuButton(_menuPanel, AdminPage.Doctors, "Doktorlar");
             AddMenuButton(_menuPanel, AdminPage.Patients, "Hastalar");
             AddMenuButton(_menuPanel, AdminPage.StockRules, "Stok Kontrolü");
             AddMenuButton(_menuPanel, AdminPage.Medicines, "İlaçlar");
@@ -110,8 +105,6 @@ namespace EczaneOtomasyon.UI.Admin
                     return _users ?? (_users = new UcAdminUsers(_kullanicilarService));
                 case AdminPage.Categories:
                     return _categories ?? (_categories = new UcAdminCategories(_kategoriService, _receteTurService));
-                case AdminPage.Doctors:
-                    return _doctors ?? (_doctors = new UcAdminDoctors(_doktorlarService));
                 case AdminPage.Patients:
                     return _patients ?? (_patients = new UcAdminPatients(_hastalarService));
                 case AdminPage.StockRules:

@@ -14,6 +14,7 @@ namespace EczaneOtomasyon.UI.Admin
         private readonly IReceteTurService _receteTurService;
 
         private int? _selectedIlacId;
+        private List<Ilaclar> _lastList = new List<Ilaclar>();
 
         public UcAdminMedicines(
             IIlaclarService ilaclarService,
@@ -44,8 +45,40 @@ namespace EczaneOtomasyon.UI.Admin
 
         private void LoadIlaclar()
         {
-            var list = _ilaclarService.TumIlaclariGetir();
-            _grid.DataSource = list.Select(i => new
+            _lastList = _ilaclarService.TumIlaclariGetir() ?? new List<Ilaclar>();
+            ApplyFilter();
+        }
+
+        private void TxtFilter_TextChanged(object sender, EventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
+        {
+            if (_grid == null)
+            {
+                return;
+            }
+
+            var text = _txtFilter?.Text?.Trim();
+
+            var filtered = string.IsNullOrWhiteSpace(text)
+                ? _lastList
+                : _lastList
+                    .Where(i =>
+                        ContainsText(i.IlacAdi, text) ||
+                        ContainsText(i.RafNo, text) ||
+                        ContainsText(i.IlacID.ToString(), text) ||
+                        ContainsText(i.KategoriID.ToString(), text) ||
+                        ContainsText(i.TurID.ToString(), text) ||
+                        ContainsText(i.BirimFiyat.ToString(), text) ||
+                        ContainsText(i.StokAdedi.ToString(), text) ||
+                        ContainsText(i.KritikSeviye.ToString(), text) ||
+                        ContainsText(i.SonKullanmaTarihi.ToShortDateString(), text))
+                    .ToList();
+
+            _grid.DataSource = filtered.Select(i => new
             {
                 i.IlacID,
                 i.IlacAdi,
@@ -62,6 +95,26 @@ namespace EczaneOtomasyon.UI.Admin
             {
                 _grid.Columns["IlacID"].Visible = false;
             }
+
+            if (_grid.Rows.Count == 0)
+            {
+                _selectedIlacId = null;
+            }
+        }
+
+        private static bool ContainsText(string value, string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            return value.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0;
         }
 
         private void Grid_SelectionChanged(object sender, EventArgs e)

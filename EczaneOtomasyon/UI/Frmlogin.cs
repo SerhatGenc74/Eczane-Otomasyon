@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,12 +22,55 @@ namespace EczaneOtomasyon
         IIlaclarService _ilaclarService;
         private bool isDarkMode = false;
 
+        private const int EM_SETCUEBANNER = 0x1501;
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
+
         public Frmlogin(IKullanicilarService kullanicilarService, IAuthService authService, IIlaclarService ilaclarService)
         {
             this._kullanicilarService = kullanicilarService;
             this._authService = authService;
             this._ilaclarService = ilaclarService;
             InitializeComponent();
+
+            AcceptButton = btn_login;
+            KeyPreview = true;
+            Load += Frmlogin_Load;
+            KeyDown += Frmlogin_KeyDown;
+        }
+
+        private void Frmlogin_Load(object sender, EventArgs e)
+        {
+            SetCueBanner(txt_username, "Kullanıcı adınızı girin");
+            SetCueBanner(txt_password, "Şifrenizi girin");
+            txt_username.Focus();
+        }
+
+        private void Frmlogin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape && pnl_login.Visible)
+            {
+                Close();
+                return;
+            }
+        }
+
+        private static void SetCueBanner(TextBox textBox, string text)
+        {
+            if (textBox == null || textBox.IsDisposed)
+            {
+                return;
+            }
+
+            try
+            {
+                SendMessage(textBox.Handle, EM_SETCUEBANNER, IntPtr.Zero, text);
+            }
+            catch
+            {
+                // Ignore (older environments / handle issues)
+            }
         }
         private void GetControl(UserControl control)
         {
@@ -39,9 +82,17 @@ namespace EczaneOtomasyon
         }
         private void btn_login_Click(object sender, EventArgs e)
         {
-            var username = txt_username.Text;
-            var password = txt_password.Text;
-            var kullanici = _kullanicilarService.Login(username,password);
+            HideLoginError();
+
+            var username = (txt_username.Text ?? string.Empty).Trim();
+            var password = txt_password.Text ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                ShowLoginError("Kullanıcı adı ve şifre zorunludur.");
+                return;
+            }
+
+            var kullanici = _kullanicilarService.Login(username, password);
             if (kullanici != null)
             {
                 _authService.SetCurrentUser(kullanici);
@@ -53,14 +104,12 @@ namespace EczaneOtomasyon
                     case "Personel":
                         pnl_login.Hide();
                         pnl_Ilaclar.Show();
-                        button3.Visible = false;
                         OpenHastaReceteModulu();
                         CheckNotifications();
                         break;
                     default:
                         pnl_login.Hide();
                         pnl_Ilaclar.Show();
-                        button3.Visible = false;
                         OpenIlacModulu();
                         CheckNotifications();
                         break;
@@ -69,9 +118,38 @@ namespace EczaneOtomasyon
             }
             else
             {
-                MessageBox.Show("Kullanıcı adı veya şifre hatalı!");
+                ShowLoginError("Kullanıcı adı veya şifre hatalı.");
             }
 
+        }
+
+        private void ShowLoginError(string message)
+        {
+            if (lbl_loginError == null)
+            {
+                MessageBox.Show(message, "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            lbl_loginError.Text = message;
+            lbl_loginError.Visible = true;
+        }
+
+        private void HideLoginError()
+        {
+            if (lbl_loginError == null)
+            {
+                return;
+            }
+
+            lbl_loginError.Text = string.Empty;
+            lbl_loginError.Visible = false;
+        }
+
+        private void btn_togglePassword_Click(object sender, EventArgs e)
+        {
+            txt_password.UseSystemPasswordChar = !txt_password.UseSystemPasswordChar;
+            btn_togglePassword.Text = txt_password.UseSystemPasswordChar ? "Göster" : "Gizle";
         }
 
         private void pnl_login_Paint(object sender, PaintEventArgs e)
@@ -112,6 +190,7 @@ namespace EczaneOtomasyon
         {
             txt_username.Text = string.Empty;
             txt_password.Text = string.Empty;
+            HideLoginError();
             pnl_content.Controls.Clear();
             pnl_Ilaclar.Hide();
             pnl_login.Show();
@@ -153,14 +232,14 @@ namespace EczaneOtomasyon
             isDarkMode = !isDarkMode;
             if (isDarkMode)
             {
-                btn_Theme.Text = "☀️ Aydınlık Tema";
+                btn_Theme.Text = " Aydınlık Tema";
                 pnl_header.BackColor = Color.FromArgb(30, 41, 59);
                 lbl_topbar_title.ForeColor = Color.White;
                 pnl_content.BackColor = Color.FromArgb(15, 23, 42);
             }
             else
             {
-                btn_Theme.Text = "🌙 Karanlık Tema";
+                btn_Theme.Text = " Karanlık Tema";
                 pnl_header.BackColor = Color.White;
                 lbl_topbar_title.ForeColor = Color.FromArgb(51, 65, 85);
                 pnl_content.BackColor = Color.WhiteSmoke;

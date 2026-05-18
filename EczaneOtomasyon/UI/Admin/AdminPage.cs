@@ -5,7 +5,6 @@ namespace EczaneOtomasyon.UI.Admin
         Home,
         Users,
         Categories,
-        Doctors,
         Patients,
         StockRules,
         Medicines

@@ -1,6 +1,7 @@
 using EczaneOtomasyon.Bussines.Services.Interfaces;
 using EczaneOtomasyon.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,6 +11,7 @@ namespace EczaneOtomasyon.UI.Admin
     {
         private readonly IHastalarService _service;
         private int? _selectedId;
+        private List<Hastalar> _lastList = new List<Hastalar>();
 
         public UcAdminPatients(IHastalarService service)
         {
@@ -20,8 +22,39 @@ namespace EczaneOtomasyon.UI.Admin
 
         private void LoadPatients()
         {
-            var list = _service.GetAllHastalar();
-            _grid.DataSource = list.Select(h => new
+            _lastList = _service.GetAllHastalar() ?? new List<Hastalar>();
+            ApplyFilter();
+        }
+
+        private void TxtFilter_TextChanged(object sender, EventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
+        {
+            if (_grid == null)
+            {
+                return;
+            }
+
+            var text = _txtFilter?.Text?.Trim();
+
+            var filtered = string.IsNullOrWhiteSpace(text)
+                ? _lastList
+                : _lastList
+                    .Where(h =>
+                        ContainsText(h.TCKimlikNo, text) ||
+                        ContainsText(h.Ad, text) ||
+                        ContainsText(h.Soyad, text) ||
+                        ContainsText(h.Telefon, text) ||
+                        ContainsText(h.Cinsiyet, text) ||
+                        ContainsText(h.KanGrubu, text) ||
+                        ContainsText(h.AlerjiBilgisi, text) ||
+                        ContainsText(h.HastaID.ToString(), text))
+                    .ToList();
+
+            _grid.DataSource = filtered.Select(h => new
             {
                 h.HastaID,
                 h.TCKimlikNo,
@@ -32,6 +65,26 @@ namespace EczaneOtomasyon.UI.Admin
                 h.KanGrubu,
                 h.AlerjiBilgisi
             }).ToList();
+
+            if (_grid.Rows.Count == 0)
+            {
+                _selectedId = null;
+            }
+        }
+
+        private static bool ContainsText(string value, string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            return value.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0;
         }
 
         private void Grid_SelectionChanged(object sender, EventArgs e)

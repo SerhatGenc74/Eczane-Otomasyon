@@ -81,6 +81,7 @@ namespace EczaneOtomasyon.UI.Admin
             bar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
 
             _txtAra = AdminUi.CreateTextBox();
+            _txtAra.TextChanged += TxtAra_TextChanged;
             var btnAra = AdminUi.CreateActionButton("Ara", Color.FromArgb(59, 130, 246));
             var btnKritik = AdminUi.CreateActionButton("Kritik", Color.FromArgb(239, 68, 68));
             var btnMiad = AdminUi.CreateActionButton("Miad", Color.FromArgb(249, 115, 22));

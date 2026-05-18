@@ -7,6 +7,8 @@ namespace EczaneOtomasyon.UI.Admin
     {
         private DataGridView _gridKategori;
         private DataGridView _gridReceteTur;
+        private TextBox _txtKategoriFilter;
+        private TextBox _txtReceteTurFilter;
         private TextBox _txtKategoriAdi;
         private TextBox _txtReceteTurAdi;
 
@@ -61,10 +63,26 @@ namespace EczaneOtomasyon.UI.Admin
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
 
+            var leftPanel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2
+            };
+            leftPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            leftPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            leftPanel.ColumnCount = 1;
+            leftPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+
+            _txtKategoriFilter = AdminUi.CreateTextBox();
+            _txtKategoriFilter.TextChanged += TxtKategoriFilter_TextChanged;
+            leftPanel.Controls.Add(_txtKategoriFilter, 0, 0);
+
             _gridKategori = AdminUi.CreateGrid();
             _gridKategori.SelectionChanged += GridKategori_SelectionChanged;
 
-            layout.Controls.Add(_gridKategori, 0, 0);
+            leftPanel.Controls.Add(_gridKategori, 0, 1);
+
+            layout.Controls.Add(leftPanel, 0, 0);
             layout.Controls.Add(BuildKategoriForm(), 1, 0);
 
             page.Controls.Add(layout);
@@ -86,10 +104,26 @@ namespace EczaneOtomasyon.UI.Admin
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
 
+            var leftPanel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2
+            };
+            leftPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            leftPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            leftPanel.ColumnCount = 1;
+            leftPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+
+            _txtReceteTurFilter = AdminUi.CreateTextBox();
+            _txtReceteTurFilter.TextChanged += TxtReceteTurFilter_TextChanged;
+            leftPanel.Controls.Add(_txtReceteTurFilter, 0, 0);
+
             _gridReceteTur = AdminUi.CreateGrid();
             _gridReceteTur.SelectionChanged += GridReceteTur_SelectionChanged;
 
-            layout.Controls.Add(_gridReceteTur, 0, 0);
+            leftPanel.Controls.Add(_gridReceteTur, 0, 1);
+
+            layout.Controls.Add(leftPanel, 0, 0);
             layout.Controls.Add(BuildReceteTurForm(), 1, 0);
 
             page.Controls.Add(layout);

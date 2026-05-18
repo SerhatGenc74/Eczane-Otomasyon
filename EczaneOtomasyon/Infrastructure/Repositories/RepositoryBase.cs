@@ -98,48 +98,64 @@ namespace EczaneOtomasyon.Infrastructure.Repositories
 
         public bool Add(Tentity entity)
         {
-            using (SqlConnection conn = Connection.GetConnection())
+            try
             {
-                var pk_prop = GetKeyProperty();
-                var props = typeof(Tentity).GetProperties().Where(p => p != pk_prop).ToList();
-
-                string columns = string.Join(", ", props.Select(p => p.Name));
-                string parameters = string.Join(", ", props.Select(p => "@" + p.Name));
-
-
-                string query = $"INSERT INTO {_tablename} ({columns}) VALUES ({parameters})";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-
-                foreach(var prop in props)
+                using (SqlConnection conn = Connection.GetConnection())
                 {
-                    cmd.Parameters.AddWithValue('@' + prop.Name, prop.GetValue(entity) ?? DBNull.Value);
-                }
+                    var pk_prop = GetKeyProperty();
+                    var props = typeof(Tentity).GetProperties().Where(p => p != pk_prop).ToList();
 
-                return cmd.ExecuteNonQuery() > 0;
+                    string columns = string.Join(", ", props.Select(p => p.Name));
+                    string parameters = string.Join(", ", props.Select(p => "@" + p.Name));
+
+
+                    string query = $"INSERT INTO {_tablename} ({columns}) VALUES ({parameters})";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    foreach (var prop in props)
+                    {
+                        cmd.Parameters.AddWithValue('@' + prop.Name, prop.GetValue(entity) ?? DBNull.Value);
+                    }
+
+                    return cmd.ExecuteNonQuery() > 0;
+                }
             }
+            catch (Exception ex)
+            {
+                return false;
+            }
+           
         }
 
         public bool Delete(int id)
         {
-            using (SqlConnection conn = Connection.GetConnection())
+            try
             {
-                var pk_prop = GetKeyProperty();
-                string query = $"DELETE FROM {_tablename} WHERE {pk_prop.Name} = @id";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-
-                cmd.Parameters.AddWithValue("@id", id);
-
-                try
+                using (SqlConnection conn = Connection.GetConnection())
                 {
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-                catch (SqlException)
-                {
-                    return false;
+                    var pk_prop = GetKeyProperty();
+                    string query = $"DELETE FROM {_tablename} WHERE {pk_prop.Name} = @id";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    try
+                    {
+                        return cmd.ExecuteNonQuery() > 0;
+                    }
+                    catch (SqlException)
+                    {
+                        return false;
+                    }
                 }
             }
+            catch
+            {
+                return false;
+            }
+            
         }
         public bool Update(int id, object values)
         {

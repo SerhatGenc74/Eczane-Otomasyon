@@ -6,6 +6,7 @@ namespace EczaneOtomasyon.UI.Admin
     partial class UcAdminUsers
     {
         private DataGridView _grid;
+        private TextBox _txtFilter;
         private TextBox _txtAdSoyad;
         private TextBox _txtKullaniciAdi;
         private TextBox _txtSifre;
@@ -45,10 +46,26 @@ namespace EczaneOtomasyon.UI.Admin
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
 
+            var leftPanel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2
+            };
+            leftPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            leftPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            leftPanel.ColumnCount = 1;
+            leftPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+
+            _txtFilter = AdminUi.CreateTextBox();
+            _txtFilter.TextChanged += TxtFilter_TextChanged;
+            leftPanel.Controls.Add(_txtFilter, 0, 0);
+
             _grid = AdminUi.CreateGrid();
             _grid.SelectionChanged += Grid_SelectionChanged;
 
-            layout.Controls.Add(_grid, 0, 0);
+            leftPanel.Controls.Add(_grid, 0, 1);
+
+            layout.Controls.Add(leftPanel, 0, 0);
             layout.Controls.Add(BuildForm(), 1, 0);
 
             return layout;

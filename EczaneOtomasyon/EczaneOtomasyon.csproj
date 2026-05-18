@@ -169,12 +169,6 @@
     <Compile Include="UI\Admin\UcAdminCategories.Designer.cs">
       <DependentUpon>UcAdminCategories.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Admin\UcAdminDoctors.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\Admin\UcAdminDoctors.Designer.cs">
-      <DependentUpon>UcAdminDoctors.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Admin\UcAdminPatients.cs">
       <SubType>UserControl</SubType>
     </Compile>

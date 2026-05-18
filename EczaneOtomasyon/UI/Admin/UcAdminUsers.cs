@@ -1,6 +1,7 @@
 using EczaneOtomasyon.Bussines.Services.Interfaces;
 using EczaneOtomasyon.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,6 +11,7 @@ namespace EczaneOtomasyon.UI.Admin
     {
         private readonly IKullanicilarService _service;
         private int? _selectedId;
+        private List<Kullanicilar> _lastList = new List<Kullanicilar>();
 
         public UcAdminUsers(IKullanicilarService service)
         {
@@ -20,14 +22,61 @@ namespace EczaneOtomasyon.UI.Admin
 
         private void LoadUsers()
         {
-            var list = _service.GetAllUsers();
-            _grid.DataSource = list.Select(u => new
+            _lastList = _service.GetAllUsers() ?? new List<Kullanicilar>();
+            ApplyFilter();
+        }
+
+        private void TxtFilter_TextChanged(object sender, EventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
+        {
+            if (_grid == null)
+            {
+                return;
+            }
+
+            var text = _txtFilter?.Text?.Trim();
+
+            var filtered = string.IsNullOrWhiteSpace(text)
+                ? _lastList
+                : _lastList
+                    .Where(u =>
+                        ContainsText(u.AdSoyad, text) ||
+                        ContainsText(u.KullaniciAdi, text) ||
+                        ContainsText(u.Rol, text) ||
+                        ContainsText(u.KullaniciID.ToString(), text))
+                    .ToList();
+
+            _grid.DataSource = filtered.Select(u => new
             {
                 u.KullaniciID,
                 u.AdSoyad,
                 u.KullaniciAdi,
                 u.Rol
             }).ToList();
+
+            if (_grid.Rows.Count == 0)
+            {
+                _selectedId = null;
+            }
+        }
+
+        private static bool ContainsText(string value, string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            return value.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0;
         }
 
         private void Grid_SelectionChanged(object sender, EventArgs e)

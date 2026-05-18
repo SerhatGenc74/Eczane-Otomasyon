@@ -49,6 +49,11 @@ namespace EczaneOtomasyon.UI.Admin
             LoadIlaclar(_currentLoader);
         }
 
+        private void TxtAra_TextChanged(object sender, EventArgs e)
+        {
+            ApplyTextFilter();
+        }
+
         private void LoadIlaclar(Func<List<Ilaclar>> loader)
         {
             if (loader == null)
@@ -57,7 +62,27 @@ namespace EczaneOtomasyon.UI.Admin
             }
 
             _lastList = loader() ?? new List<Ilaclar>();
-            _grid.DataSource = _lastList.Select(i => new
+            ApplyTextFilter();
+        }
+
+        private void ApplyTextFilter()
+        {
+            if (_grid == null)
+            {
+                return;
+            }
+
+            var text = _txtAra?.Text?.Trim();
+            var filtered = string.IsNullOrWhiteSpace(text)
+                ? _lastList
+                : _lastList
+                    .Where(i =>
+                        ContainsText(i.IlacAdi, text) ||
+                        ContainsText(i.RafNo, text) ||
+                        ContainsText(i.IlacID.ToString(), text))
+                    .ToList();
+
+            _grid.DataSource = filtered.Select(i => new
             {
                 i.IlacID,
                 i.IlacAdi,
@@ -66,6 +91,26 @@ namespace EczaneOtomasyon.UI.Admin
                 i.RafNo,
                 SonKullanmaTarihi = i.SonKullanmaTarihi
             }).ToList();
+
+            if (_grid.Rows.Count == 0)
+            {
+                _selected = null;
+            }
+        }
+
+        private static bool ContainsText(string value, string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            return value.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0;
         }
 
         private void Grid_SelectionChanged(object sender, EventArgs e)

@@ -40,7 +40,6 @@ namespace EczaneOtomasyon.UI
 
             _gridPanel.Controls.Add(CreateCard("Kullanıcı Yönetimi", "Kullanıcı ekle, rol güncelle, şifre işlemleri"), 0, 0);
             _gridPanel.Controls.Add(CreateCard("Kategori Yönetimi", "İlaç kategorileri ve reçete türleri"), 1, 0);
-            _gridPanel.Controls.Add(CreateCard("Doktor Yönetimi", "Doktor bilgisi ve kurum kayıtları"), 0, 1);
             _gridPanel.Controls.Add(CreateCard("Hasta Düzenleme", "Hasta iletişim, alerji, kan grubu güncelle"), 1, 1);
             _gridPanel.Controls.Add(CreateCard("Stok Kuralları", "Kritik seviye, raf no ve alarm ayarları"), 0, 2);
             _gridPanel.Controls.Add(CreateCard("Arayüz Ayarları", "Tema, başlıklar ve ekran düzeni"), 1, 2);

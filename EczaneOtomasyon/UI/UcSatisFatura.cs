@@ -516,6 +516,7 @@ namespace EczaneOtomasyon.UI
 
         private Satislar BuildSaleFromHeader()
         {
+
             if (!_currentKullaniciId.HasValue)
             {
                 MessageBox.Show("Kasiyer bilgisi bulunamadı.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
